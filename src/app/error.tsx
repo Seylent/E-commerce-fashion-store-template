@@ -1,0 +1,2 @@
+"use client";
+export default function ErrorPage({ reset }: { error: Error; reset: () => void }) { return <div className="state-page"><span className="eyebrow">SOMETHING WENT WRONG</span><h1>Let’s try that again.</h1><p>We could not load this page.</p><button className="button-dark" onClick={reset}>TRY AGAIN</button></div>; }

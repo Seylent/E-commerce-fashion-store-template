@@ -1,0 +1,61 @@
+export type ProductColor = { name: string; hex: string };
+export type ProductVariant = {
+  id: string;
+  color: string;
+  size: string;
+  inventory: number;
+};
+export type Product = {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  collection: string;
+  price: number;
+  badge?: string;
+  description: string;
+  details: string[];
+  images: string[];
+  colors: ProductColor[];
+  sizes: string[];
+  variants: ProductVariant[];
+};
+export type Collection = {
+  slug: string;
+  title: string;
+  eyebrow: string;
+  description: string;
+  image: string;
+};
+export type BrandConfig = {
+  id: string;
+  name: string;
+  logo: { text: string; image?: string };
+  favicon: string;
+  tagline: string;
+  announcement: string;
+  colors: { background: string; surface: string; text: string; muted: string; border: string; accent: string };
+  typography: { body: string; display: string };
+  currency: string;
+  locale: string;
+  seo: { title: string; description: string; keywords: string[] };
+  hero: { eyebrow: string; title: string; image: string; mobileImage?: string; cta: string; caption: string };
+  home: {
+    newArrivalsTitle: string;
+    editorialEyebrow: string;
+    editorialTitle: string;
+    editorialCopy: string;
+    editorialImage: string;
+    storyEyebrow: string;
+    storyTitle: string;
+    storyCopy: string;
+    newsletterTitle: string;
+    newsletterCopy: string;
+    featuredSections: Array<"arrivals" | "editorial" | "collections" | "story" | "newsletter">;
+  };
+  collections: Collection[];
+  products: Product[];
+  social: { instagram?: string; pinterest?: string; tiktok?: string };
+  contact: { email: string; location: string; hours: string };
+  shipping: { summary: string; delivery: string; returns: string };
+};
