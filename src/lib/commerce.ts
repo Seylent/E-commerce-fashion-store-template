@@ -15,6 +15,7 @@ export function getVariant(product: Product, color: string, size: string): Produ
 export function filterProducts(products: Product[], filters: { search?: string; category?: string; size?: string; color?: string; collection?: string; sort?: string }) {
   const search = filters.search?.trim().toLowerCase();
   const result = products.filter((product) =>
+    (!product.hidden) &&
     (!search || `${product.name} ${product.category} ${product.description}`.toLowerCase().includes(search)) &&
     (!filters.category || product.category === filters.category) &&
     (!filters.collection || product.collection === filters.collection) &&

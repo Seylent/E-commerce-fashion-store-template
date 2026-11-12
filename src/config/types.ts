@@ -19,6 +19,9 @@ export type Product = {
   colors: ProductColor[];
   sizes: string[];
   variants: ProductVariant[];
+  /** Configurator overrides (demo only). */
+  customImage?: string;
+  hidden?: boolean;
 };
 export type Collection = {
   slug: string;
@@ -39,7 +42,7 @@ export type BrandConfig = {
   currency: string;
   locale: string;
   seo: { title: string; description: string; keywords: string[] };
-  hero: { eyebrow: string; title: string; image: string; mobileImage?: string; cta: string; caption: string };
+  hero: { eyebrow: string; title: string; image: string; mobileImage?: string; cta: string; caption: string; /** Photo darkening multiplier (configurator). 1 = template default. */ shade?: number };
   home: {
     newArrivalsTitle: string;
     editorialEyebrow: string;
@@ -52,6 +55,9 @@ export type BrandConfig = {
     newsletterTitle: string;
     newsletterCopy: string;
     featuredSections: Array<"arrivals" | "editorial" | "collections" | "story" | "newsletter">;
+    /** Catalog grid density (configurator). Defaults: 4 desktop / 2 mobile. */
+    desktopColumns?: 2 | 3 | 4;
+    mobileColumns?: 1 | 2;
   };
   collections: Collection[];
   products: Product[];
