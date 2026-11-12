@@ -12,7 +12,6 @@ import { visibleProducts } from "@/store/configMutations";
 
 function Hero() {
   const brand = useBrand();
-  const eyebrow = useEditable("hero.eyebrow", "Надзаголовок Hero");
   const title = useEditable("hero.title", "Заголовок Hero");
   const cta = useEditable("hero.cta", "Текст кнопки Hero");
   const caption = useEditable("hero.caption", "Підпис Hero");
@@ -21,10 +20,8 @@ function Hero() {
     <section {...image} className={`hero ${image.className ?? ""}`}>
       <SmartImage src={brand.hero.image} alt="Fashion editorial in a warm stone setting" fill priority sizes="100vw" className="hero-image" />
       <div className="hero-shade" style={{ opacity: brand.hero.shade ?? 1 }} />
-      <div className="hero-top"><span {...eyebrow}>{brand.hero.eyebrow}</span><span>EST. FOR EVERY DAY</span></div>
       <div className="hero-bottom">
         <div>
-          <span className="eyebrow">THE NEW PERSPECTIVE</span>
           <h1 {...title}>{brand.hero.title}</h1>
           <Link href="/shop" {...cta} className={`hero-button ${cta.className ?? ""}`}>{brand.hero.cta}<ArrowRight size={18} /></Link>
         </div>
@@ -47,7 +44,7 @@ function Arrivals() {
   return (
     <section className="arrivals section-shell">
       <Reveal className="section-heading">
-        <div><span className="eyebrow">NEW SEASON / NEW FORMS</span><h2 {...heading}>{brand.home.newArrivalsTitle}</h2></div>
+        <div><h2 {...heading}>{brand.home.newArrivalsTitle}</h2></div>
         <Link href="/shop" className="underlined-link">SHOP ALL <ArrowUpRight size={16} /></Link>
       </Reveal>
       <div className="product-grid home-grid" style={gridStyle}>
@@ -63,7 +60,6 @@ function Editorial() {
     <section className="editorial-section">
       <div className="editorial-image"><SmartImage src={brand.home.editorialImage} alt="Model wearing a considered seasonal look" fill sizes="(max-width: 800px) 100vw, 55vw" /></div>
       <Reveal className="editorial-content">
-        <span className="eyebrow">{brand.home.editorialEyebrow}</span>
         <h2>{brand.home.editorialTitle}</h2>
         <p>{brand.home.editorialCopy}</p>
         <Link href="/lookbook" className="underlined-link">VIEW THE LOOKBOOK <ArrowUpRight size={16} /></Link>
@@ -77,7 +73,7 @@ function Collections() {
   return (
     <section className="collections-section section-shell">
       <Reveal className="section-heading">
-        <div><span className="eyebrow">CURATED FOR YOU</span><h2>Explore the collections.</h2></div>
+        <div><h2>Explore the collections.</h2></div>
         <Link href="/collections" className="underlined-link">VIEW ALL <ArrowUpRight size={16} /></Link>
       </Reveal>
       <div className="collection-grid">
@@ -85,7 +81,7 @@ function Collections() {
           <Reveal key={collection.slug} delay={index * 0.1}>
             <Link className="collection-card" href={`/collections/${collection.slug}`}>
               <div className="collection-image"><SmartImage src={collection.image} alt={collection.title} fill sizes="(max-width: 700px) 100vw, 50vw" /></div>
-              <div className="collection-copy"><span className="eyebrow">{collection.eyebrow}</span><div><h3>{collection.title}</h3><ArrowUpRight size={22} /></div></div>
+              <div className="collection-copy"><div><h3>{collection.title}</h3><ArrowUpRight size={22} /></div></div>
             </Link>
           </Reveal>
         ))}
@@ -98,7 +94,6 @@ function Story() {
   const brand = useBrand();
   return (
     <section className="story-section section-shell">
-      <span className="eyebrow">{brand.home.storyEyebrow}</span>
       <Reveal>
         <h2>{brand.home.storyTitle}</h2>
         <p>{brand.home.storyCopy}</p>

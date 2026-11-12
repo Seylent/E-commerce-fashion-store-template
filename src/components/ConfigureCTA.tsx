@@ -8,5 +8,5 @@ import { SlidersHorizontal } from "lucide-react";
 export function ConfigureCTA() {
   const pathname = usePathname();
   if (pathname.startsWith("/configure")) return null;
-  return <Link href="/configure" className="configure-cta"><SlidersHorizontal size={16} /> Налаштувати під свій бренд</Link>;
+  return <Link href="/configure" className="configure-cta"><SlidersHorizontal size={16} /> Configure your site</Link>;
 }

@@ -9,11 +9,11 @@ const base: BrandConfig = {
   tagline: "A study in everyday form.",
   announcement: "COMPLIMENTARY SHIPPING ON ORDERS OVER $200",
   colors: { background: "#FFFFFF", surface: "#FFFFFF", text: "#0A0A0A", muted: "#6E6E6E", border: "#E5E5E5", accent: "#0A0A0A" },
-  typography: { body: "Arial, Helvetica, sans-serif", display: "Arial, Helvetica, sans-serif" },
+  typography: { body: "\"Futura PT\", Futura, \"Century Gothic\", \"Apple Gothic\", sans-serif", display: "\"Futura PT\", Futura, \"Century Gothic\", \"Apple Gothic\", sans-serif" },
   currency: "USD",
   locale: "en-US",
   seo: { title: "Atelier — Considered clothing for every day", description: "Explore modern essentials, relaxed tailoring and considered layers. An original fashion storefront demo.", keywords: ["contemporary clothing", "modern essentials", "fashion"] },
-  hero: { eyebrow: "THE ART OF EVERYDAY", title: "A quieter\nkind of presence.", image: "/images/hero-back.png", cta: "EXPLORE THE COLLECTION", caption: "FORM, FEELING, AND THE SPACE BETWEEN." },
+  hero: { eyebrow: "THE ART OF EVERYDAY", title: "A quieter\nkind of presence.", image: "/images/hero-bg2.png", cta: "EXPLORE THE COLLECTION", caption: "FORM, FEELING, AND THE SPACE BETWEEN." },
   home: {
     newArrivalsTitle: "The latest, considered.",
     editorialEyebrow: "THE EDIT",
