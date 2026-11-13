@@ -25,7 +25,7 @@ const base: BrandConfig = {
     storyCopy: "We believe getting dressed should feel instinctive. Our pieces balance a deliberate silhouette with the freedom to make it your own.",
     newsletterTitle: "A note from Atelier.",
     newsletterCopy: "New pieces, stories and a little inspiration. Delivered occasionally.",
-    featuredSections: ["arrivals", "editorial", "collections", "story", "newsletter"],
+    featuredSections: ["arrivals", "story", "newsletter"],
   },
   collections: [
     { slug: "essentials", title: "The Essentials", eyebrow: "EVERYDAY OBJECTS", description: "Foundations made to find their place in every wardrobe.", image: "/images/product-shirt.png" },

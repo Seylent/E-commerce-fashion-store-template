@@ -2,19 +2,16 @@
 
 import { create } from "zustand";
 
-export type EditorDevice = "desktop" | "mobile";
-export type EditorTab = "brand" | "hero" | "products";
+export type EditorDevice = "desktop" | "mobile-max";
+export type EditorTab = "sections" | "styles" | "brand" | "content" | "settings";
 
 type EditorState = {
-  /** true only while the configurator is mounted (public pages stay untouched). */
   active: boolean;
-  /** false = preview mode: the store looks exactly like the live site. */
   editMode: boolean;
   device: EditorDevice;
   tab: EditorTab;
-  /** id of the element selected by clicking in the preview. */
   selected: string | null;
-  /** mobile bottom sheet visibility */
+  activeSection: string;
   panelOpen: boolean;
   submissionOpen: boolean;
   setActive: (active: boolean) => void;
@@ -22,6 +19,7 @@ type EditorState = {
   setDevice: (device: EditorDevice) => void;
   setTab: (tab: EditorTab) => void;
   select: (id: string | null) => void;
+  setActiveSection: (id: string) => void;
   setPanelOpen: (panelOpen: boolean) => void;
   openSubmission: () => void;
   closeSubmission: () => void;
@@ -31,18 +29,31 @@ export const useEditor = create<EditorState>((set) => ({
   active: false,
   editMode: true,
   device: "desktop",
-  tab: "brand",
+  tab: "sections",
   selected: null,
-  panelOpen: true,
+  activeSection: "hero",
+  panelOpen: false,
   submissionOpen: false,
   setActive: (active) => set({ active }),
   setEditMode: (editMode) => set({ editMode, selected: null }),
   setDevice: (device) => set({ device }),
   setTab: (tab) => set({ tab }),
+  setActiveSection: (activeSection) => set({ activeSection }),
   select: (id) => {
     if (!id) return set({ selected: null });
-    const tab: EditorTab = id.startsWith("hero") ? "hero" : id.startsWith("product") || id === "home.newArrivalsTitle" ? "products" : "brand";
-    set({ selected: id, tab, panelOpen: true });
+    const tab: EditorTab = id.startsWith("hero")
+      ? "sections"
+      : id.startsWith("product") || id === "home.newArrivalsTitle"
+      ? "content"
+      : id.startsWith("brand")
+      ? "brand"
+      : "styles";
+    const activeSection = id.startsWith("hero")
+      ? "hero"
+      : id === "home.newArrivalsTitle" || id.startsWith("product")
+      ? "arrivals"
+      : "hero";
+    set({ selected: id, tab, activeSection, panelOpen: true });
   },
   setPanelOpen: (panelOpen) => set({ panelOpen }),
   openSubmission: () => set({ submissionOpen: true }),

@@ -4,6 +4,7 @@ import type { BrandConfig, Product } from "@/config/types";
 import { useConfigStore } from "@/store/config";
 
 type Commit = (update: (current: BrandConfig) => BrandConfig) => void;
+export type FeaturedSection = BrandConfig["home"]["featuredSections"][number];
 
 export function useConfigCommit(): Commit {
   return useConfigStore((state) => state.commit);
@@ -30,11 +31,53 @@ export function patchContact(commit: Commit, patch: Partial<BrandConfig["contact
   commit((current) => ({ ...current, contact: { ...current.contact, ...patch } }));
 }
 
+export function toggleFeaturedSection(sections: FeaturedSection[], id: FeaturedSection) {
+  return sections.includes(id)
+    ? sections.filter((section) => section !== id)
+    : [...sections, id];
+}
+
+export function moveFeaturedSection(sections: FeaturedSection[], id: string, direction: -1 | 1) {
+  const index = sections.findIndex((section) => section === id);
+  const target = index + direction;
+  if (index < 0 || target < 0 || target >= sections.length) return sections;
+
+  const next = [...sections];
+  [next[index], next[target]] = [next[target], next[index]];
+  return next;
+}
+
+export function orderFeaturedSections<T extends { id: string }>(sections: T[], order: readonly string[]) {
+  const sectionsById = new Map(sections.map((section) => [section.id, section]));
+  return order.flatMap((id) => {
+    const section = sectionsById.get(id);
+    return section ? [section] : [];
+  });
+}
+
 export function patchProduct(commit: Commit, id: string, patch: Partial<Product>) {
   commit((current) => ({
     ...current,
     products: current.products.map((product) => (product.id === id ? { ...product, ...patch } : product)),
   }));
+}
+
+export function createDraftProduct(source: Product, id: string, slug: string, name: string): Product {
+  const product = structuredClone(source);
+  return {
+    ...product,
+    id,
+    slug,
+    name,
+    price: 0,
+    badge: undefined,
+    customImage: undefined,
+    hidden: true,
+    variants: product.variants.map((variant, index) => ({
+      ...variant,
+      id: `${id}-variant-${index + 1}`,
+    })),
+  };
 }
 
 export function moveProduct(commit: Commit, id: string, direction: -1 | 1) {
@@ -45,6 +88,13 @@ export function moveProduct(commit: Commit, id: string, direction: -1 | 1) {
     if (index < 0 || target < 0 || target >= products.length) return current;
     [products[index], products[target]] = [products[target], products[index]];
     return { ...current, products };
+  });
+}
+
+export function removeProduct(commit: Commit, id: string) {
+  commit((current) => {
+    const products = current.products.filter((product) => product.id !== id);
+    return products.length === current.products.length ? current : { ...current, products };
   });
 }
 

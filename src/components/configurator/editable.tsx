@@ -16,6 +16,7 @@ type EditableProps = {
   role?: string;
   tabIndex?: number;
   "aria-label"?: string;
+  "aria-description"?: string;
 };
 
 /**
@@ -23,7 +24,7 @@ type EditableProps = {
  * existing element; outside the configurator (or in preview mode) every prop is
  * undefined, so the public site renders and behaves exactly as before.
  */
-export function useEditable(id: string, label: string): EditableProps {
+export function useEditable(id: string, label: string, buttonRole: "button" | false = "button"): EditableProps {
   const isActive = useEditor((state) => state.active && state.editMode);
   const selected = useEditor((state) => state.selected);
   const select = useEditor((state) => state.select);
@@ -46,8 +47,8 @@ export function useEditable(id: string, label: string): EditableProps {
           }
         }
       : undefined,
-    role: active ? "button" : undefined,
+    role: active && buttonRole ? buttonRole : undefined,
     tabIndex: active ? 0 : undefined,
-    "aria-label": active ? `Редагувати: ${label}` : undefined,
+    "aria-description": active ? `Редагувати: ${label}` : undefined,
   };
 }

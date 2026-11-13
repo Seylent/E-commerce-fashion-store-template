@@ -1,37 +1,41 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, RotateCcw } from "lucide-react";
-import { demoImages } from "@/config/demoImages";
+import { ImagePlus, RotateCcw, Trash2 } from "lucide-react";
 import { ImageUploadError, fileToDataUrl } from "@/lib/image";
 import { useConfigStore } from "@/store/config";
 import { SmartImage } from "@/components/SmartImage";
+import { OrbLoader } from "./OrbLoader";
 
 type ImagePickerProps = {
   label: string;
   value: string;
   onChange: (next: string) => void;
-  group: keyof typeof demoImages;
+  group: "hero" | "product";
   aspect?: string;
-  /** Preview element id — focuses/opens when that element is clicked. */
   id?: string;
+  /** Reset to demo photo */
   onClear?: () => void;
+  /** Remove custom upload entirely (product images) */
+  onDelete?: () => void;
 };
 
-/** Upload (compressed to a data URL) or pick one of the template's demo photos. */
-export function ImagePicker({ label, value, onChange, group, aspect = "16 / 9", id, onClear }: ImagePickerProps) {
+export function ImagePicker({ label, value, onChange, group, aspect = "16 / 9", id, onClear, onDelete }: ImagePickerProps) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const begin = useConfigStore((state) => state.beginEdit);
-  const end = useConfigStore((state) => state.endEdit);
 
-  const apply = (next: string) => {
+  const applyEdit = (change: () => void) => {
     begin();
-    onChange(next);
-    // endEdit on the next tick so the blur of a focused field does not race.
-    requestAnimationFrame(() => useConfigStore.getState().endEdit());
+    try {
+      change();
+    } finally {
+      useConfigStore.getState().endEdit();
+    }
   };
+
+  const apply = (next: string) => applyEdit(() => onChange(next));
 
   const upload = async (file: File | undefined) => {
     if (!file) return;
@@ -48,25 +52,61 @@ export function ImagePicker({ label, value, onChange, group, aspect = "16 / 9", 
     }
   };
 
-  return <div className="cfg-field" data-picker-id={id}>
-    <span className="cfg-label">{label}</span>
-    <div className="cfg-image-picker" style={{ aspectRatio: aspect }}>
-      {value
-        ? <SmartImage src={value} alt={label} fill sizes="320px" />
-        : <span className="cfg-image-empty">Фото не вибрано</span>}
+  return (
+    <div className="cfg-field" data-picker-id={id}>
+      <span className="cfg-label">{label}</span>
+
+      {/* preview */}
+      <div className="cfg-image-picker" style={{ aspectRatio: aspect }}>
+        {value
+          ? <SmartImage src={value} alt={label} fill sizes="320px" />
+          : <span className="cfg-image-empty">Фото не вибрано</span>}
+        {busy && (
+          <div className="cfg-busy-overlay">
+            <OrbLoader state="working" size={32} theme="dark" />
+            <span>Обробка…</span>
+          </div>
+        )}
+      </div>
+
+      {/* actions row */}
+      <div className="cfg-picker-actions">
+        <label className="cfg-upload" aria-disabled={busy}>
+          <ImagePlus size={14} />
+          {busy ? "Обробка…" : "Завантажити фото"}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            disabled={busy}
+            onChange={(e) => upload(e.target.files?.[0])}
+          />
+        </label>
+        {onClear && (
+          <button
+            type="button"
+            className="cfg-ghost-button"
+            disabled={busy}
+            onClick={() => applyEdit(onClear)}
+          >
+            <RotateCcw size={12} /> Демо
+          </button>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            className="cfg-ghost-button cfg-ghost-danger"
+            disabled={busy}
+            aria-label="Видалити фото"
+            onClick={() => applyEdit(onDelete)}
+          >
+            <Trash2 size={12} /> Видалити
+          </button>
+        )}
+      </div>
+
+      {error && <span className="cfg-error" role="alert">{error}</span>}
     </div>
-    <div className="cfg-picker-actions">
-      <label className="cfg-upload">
-        <ImagePlus size={15} /> {busy ? "Обробка…" : "Завантажити фото"}
-        <input ref={inputRef} type="file" accept="image/*" hidden onChange={(event) => upload(event.target.files?.[0])} />
-      </label>
-      {onClear && <button type="button" className="cfg-ghost-button" onClick={() => { begin(); onClear(); requestAnimationFrame(() => useConfigStore.getState().endEdit()); }}><RotateCcw size={13} /> Демо-фото</button>}
-    </div>
-    <div className="cfg-picker-grid" aria-label="Демонстраційні фотографії">
-      {demoImages[group].map((image) => (
-        <button key={image.src} type="button" title={image.label} aria-label={`Вибрати демо-фото: ${image.label}`} className={value === image.src ? "selected" : ""} style={{ backgroundImage: `url(${image.src})` }} onClick={() => apply(image.src)} />
-      ))}
-    </div>
-    {error && <span className="cfg-error" role="alert">{error}</span>}
-  </div>;
+  );
 }

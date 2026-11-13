@@ -41,7 +41,9 @@ export const useConfigStore = create<ConfigStore>((set, get) => ({
       if (next === state.config) return state;
       return {
         config: next,
-        past: [...state.past, state.config].slice(-HISTORY_LIMIT),
+        past: state.pendingSnapshot
+          ? state.past
+          : [...state.past, state.config].slice(-HISTORY_LIMIT),
         future: [],
       };
     }),
@@ -77,8 +79,7 @@ export const useConfigStore = create<ConfigStore>((set, get) => ({
   reset: () => get().commit(() => defaultConfig),
 }));
 
-/** Reactive brand configuration. Outside the configurator this always equals
- *  the shipped preset, so the public site renders exactly as before. */
+/** Reactive brand configuration shared by the editor and storefront preview. */
 export function useBrand(): BrandConfig {
   return useConfigStore((state) => state.config);
 }

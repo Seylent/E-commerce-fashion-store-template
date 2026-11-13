@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { catalog } from "@/config/catalog";
-import { filterProducts, getVariant } from "./commerce";
+import { filterProducts, formatPrice, getVariant, isCurrencyCode, isSupportedLocale } from "./commerce";
 import { useCart } from "@/store/cart";
 
 describe("storefront shopping flow", () => {
@@ -28,5 +28,22 @@ describe("storefront shopping flow", () => {
     const product = catalog[0];
     useCart.getState().add(product, getVariant(product, "Black", "L")!);
     expect(useCart.getState().lines).toHaveLength(0);
+  });
+});
+
+describe("price formatting", () => {
+  it("accepts valid currency codes and locales", () => {
+    expect(isCurrencyCode("USD")).toBe(true);
+    expect(isCurrencyCode("UAH")).toBe(true);
+    expect(isCurrencyCode("EUR")).toBe(true);
+    expect(isCurrencyCode("US")).toBe(false);
+    expect(isSupportedLocale("uk-UA")).toBe(true);
+    expect(isSupportedLocale("en-US")).toBe(true);
+    expect(isSupportedLocale("en_US")).toBe(false);
+  });
+
+  it("falls back safely when editable currency or locale values are invalid", () => {
+    expect(formatPrice(1234, { currency: "???", locale: "en_US" }))
+      .toBe(new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(1234));
   });
 });

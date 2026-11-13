@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useConfigStore } from "@/store/config";
 import { useEditor } from "@/store/editor";
 
@@ -88,10 +88,33 @@ type ColorFieldProps = {
 
 export function ColorField({ label, value, onChange }: ColorFieldProps) {
   const span = useEditSpan();
+  const [draft, setDraft] = useState(value);
+  const [focused, setFocused] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const updateDraft = (next: string) => {
+    setDraft(next);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => onChange(next), 100);
+  };
+
+  const commitDraft = (next: string) => {
+    clearTimeout(timer.current);
+    onChange(next);
+  };
+
   return <label className="cfg-color">
-    <input type="color" value={value} onInput={(event) => onChange(event.currentTarget.value)} {...span} />
+    <input
+      type="color"
+      value={focused ? draft : value}
+      onInput={(event) => updateDraft(event.currentTarget.value)}
+      onBlur={(event) => { commitDraft(event.currentTarget.value); setFocused(false); span.onBlur?.(); }}
+      onFocus={() => { setDraft(value); setFocused(true); span.onFocus?.(); }}
+    />
     <span className="cfg-color-name">{label}</span>
-    <code>{value.toUpperCase()}</code>
+    <code>{(focused ? draft : value).toUpperCase()}</code>
   </label>;
 }
 
@@ -105,9 +128,15 @@ type SegmentedProps<T extends string | number> = {
 export function Segmented<T extends string | number>({ label, value, options, onChange }: SegmentedProps<T>) {
   return <div className="cfg-field">
     <span className="cfg-label">{label}</span>
-    <div className="cfg-segmented" role="radiogroup" aria-label={label}>
+    <div className="cfg-segmented" role="group" aria-label={label}>
       {options.map((option) => (
-        <button key={String(option.value)} type="button" role="radio" aria-checked={value === option.value} className={value === option.value ? "selected" : ""} onClick={() => onChange(option.value)}>
+        <button
+          type="button"
+          key={String(option.value)}
+          aria-pressed={String(value) === String(option.value)}
+          className={String(value) === String(option.value) ? "selected" : ""}
+          onClick={() => onChange(option.value)}
+        >
           {option.label}
         </button>
       ))}
@@ -127,10 +156,22 @@ type RangeFieldProps = {
 
 export function RangeField({ label, value, onChange, min = 0, max = 1, step = 0.05, format }: RangeFieldProps) {
   const span = useEditSpan();
-  return <label className="cfg-field">
+  const progress = max > min ? Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100)) : 0;
+  return <div className="cfg-field" {...span}>
     <span className="cfg-label">{label}<em className="cfg-counter">{format ? format(value) : value}</em></span>
-    <input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} {...span} />
-  </label>;
+    <input
+      className="cfg-range"
+      type="range"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      style={{ "--range-progress": `${progress}%` } as React.CSSProperties}
+      onChange={(event) => onChange(Number(event.currentTarget.value))}
+      aria-label={label}
+      aria-valuetext={format?.(value)}
+    />
+  </div>;
 }
 
 export function FieldGroup({ title, children }: { title: string; children: React.ReactNode }) {

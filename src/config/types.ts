@@ -30,6 +30,26 @@ export type Collection = {
   description: string;
   image: string;
 };
+export type HomeSectionId = "arrivals" | "editorial" | "collections" | "story" | "newsletter";
+/** Per-element typography overrides set in the configurator's «Текст» panel. */
+export type TextStyle = {
+  /** Full CSS font stack (omit = inherit the brand font). */
+  family?: string;
+  /** 300 Light / 400 Regular / 500 Medium / 700 Bold / 900 Black. */
+  weight?: number;
+  /** Font size in px. */
+  size?: number;
+  /** Line height in percent (110 = 110%). */
+  lineHeight?: number;
+  color?: string;
+  /** Text opacity in percent. */
+  opacity?: number;
+  align?: "left" | "center" | "right" | "justify";
+  shadow?: boolean;
+  outline?: boolean;
+  animation?: "none" | "fade" | "rise";
+};
+
 export type BrandConfig = {
   id: string;
   name: string;
@@ -54,11 +74,14 @@ export type BrandConfig = {
     storyCopy: string;
     newsletterTitle: string;
     newsletterCopy: string;
-    featuredSections: Array<"arrivals" | "editorial" | "collections" | "story" | "newsletter">;
+    featuredSections: HomeSectionId[];
     /** Catalog grid density (configurator). Defaults: 4 desktop / 2 mobile. */
     desktopColumns?: 2 | 3 | 4;
     mobileColumns?: 1 | 2;
+    homepageProductCount?: 4 | 8 | 12;
   };
+  /** Per-element text styles, keyed by editable element id (e.g. "hero.title"). */
+  textStyles?: Record<string, TextStyle>;
   collections: Collection[];
   products: Product[];
   social: { instagram?: string; pinterest?: string; tiktok?: string };

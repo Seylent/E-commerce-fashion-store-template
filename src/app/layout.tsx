@@ -23,5 +23,5 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const c = activeBrand.colors;
   const style = { "--background": c.background, "--surface": c.surface, "--text": c.text, "--muted": c.muted, "--border": c.border, "--accent": c.accent, "--font-body": activeBrand.typography.body, "--font-display": activeBrand.typography.display } as React.CSSProperties;
-  return <html lang={activeBrand.locale.split("-")[0]} data-scroll-behavior="smooth"><body style={style}><a className="skip-link" href="#main">Skip to content</a><div className="storefront"><Header /><main id="main">{children}</main><Footer /><CartDrawer /></div><ConfigureCTA /></body></html>;
+  return <html lang={activeBrand.locale.split("-")[0]} data-scroll-behavior="smooth"><body className={archivo.variable} style={style}><a className="skip-link" href="#main">Skip to content</a><div className="storefront"><Header /><main id="main">{children}</main><Footer /><CartDrawer /></div><ConfigureCTA /></body></html>;
 }

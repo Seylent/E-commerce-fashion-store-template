@@ -1,6 +1,5 @@
-/** Client-side image preparation for the configurator: uploads are downscaled
- *  and re-encoded as data URLs so they survive reloads via localStorage and can
- *  be rendered with plain <img> (next/image cannot optimize inline data). */
+/** Client-side image preparation: uploads become compact data URLs for preview
+ *  and JSON export (next/image cannot optimize inline data). */
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
@@ -19,7 +18,10 @@ export async function fileToDataUrl(file: File, maxDimension = 1600, quality = 0
   canvas.width = width;
   canvas.height = height;
   const context = canvas.getContext("2d");
-  if (!context) throw new ImageUploadError("Не вдалося обробити зображення.");
+  if (!context) {
+    bitmap.close();
+    throw new ImageUploadError("Не вдалося обробити зображення.");
+  }
   context.drawImage(bitmap, 0, 0, width, height);
   bitmap.close();
 
